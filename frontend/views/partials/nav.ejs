@@ -1,0 +1,21 @@
+<nav class="navbar">
+  <a href="/" class="nav-logo">🚩 FlagQuiz</a>
+  <div class="nav-links">
+    <a href="/leaderboard" class="nav-link">🏆 Leaderboard</a>
+    <% if (user) { %>
+      <a href="/game" class="nav-link">🎮 Play</a>
+      <% if (user.is_admin) { %>
+        <a href="/admin" class="nav-link nav-link-admin">⚙️ Admin</a>
+      <% } %>
+      <div class="nav-user">
+        <span class="nav-username">
+          <%= user.is_admin ? '👑' : '👤' %> <%= user.username %>
+        </span>
+        <a href="/logout" class="btn btn-sm btn-ghost">Logout</a>
+      </div>
+    <% } else { %>
+      <a href="/login" class="btn btn-sm btn-ghost">Login</a>
+      <a href="/register" class="btn btn-sm btn-primary">Sign Up</a>
+    <% } %>
+  </div>
+</nav>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guess the Flag 🚩</title>
+  <meta name="description" content="Test your geography knowledge! Guess flags from around the world, compete on the global leaderboard." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <%- include('partials/nav') %>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-badge">🌍 Geography Challenge</div>
+      <h1 class="hero-title">Guess the<br /><span class="gradient-text">Flag</span></h1>
+      <p class="hero-subtitle">
+        Test your knowledge of world flags. Compete with players worldwide and climb the leaderboard!
+      </p>
+      <div class="hero-actions">
+        <% if (user) { %>
+          <a href="/game" class="btn btn-primary btn-lg" id="play-now-btn">
+            <span>🎮</span> Play Now
+          </a>
+          <a href="/leaderboard" class="btn btn-outline btn-lg">
+            <span>🏆</span> Leaderboard
+          </a>
+        <% } else { %>
+          <a href="/register" class="btn btn-primary btn-lg" id="get-started-btn">
+            <span>🚀</span> Get Started
+          </a>
+          <a href="/login" class="btn btn-outline btn-lg">
+            <span>🔑</span> Sign In
+          </a>
+        <% } %>
+      </div>
+    </div>
+    <div class="hero-flags">
+      <div class="floating-flag" style="--delay:0s">🇫🇷</div>
+      <div class="floating-flag" style="--delay:0.5s">🇯🇵</div>
+      <div class="floating-flag" style="--delay:1s">🇧🇷</div>
+      <div class="floating-flag" style="--delay:1.5s">🇩🇪</div>
+      <div class="floating-flag" style="--delay:2s">🇺🇸</div>
+      <div class="floating-flag" style="--delay:2.5s">🇮🇳</div>
+      <div class="floating-flag" style="--delay:0.8s">🇮🇹</div>
+      <div class="floating-flag" style="--delay:1.3s">🇦🇺</div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">🌍</div>
+          <div class="stat-value">195</div>
+          <div class="stat-label">Countries</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⚡</div>
+          <div class="stat-value">10</div>
+          <div class="stat-label">Questions / Round</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⏱️</div>
+          <div class="stat-value">15s</div>
+          <div class="stat-label">Per Question</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🏆</div>
+          <div class="stat-value">1000</div>
+          <div class="stat-label">Max Score</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How to play -->
+  <section class="how-section">
+    <div class="container">
+      <h2 class="section-title">How to Play</h2>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">01</div>
+          <div class="step-icon">👤</div>
+          <h3>Create Account</h3>
+          <p>Sign up for free and join thousands of flag enthusiasts worldwide.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">02</div>
+          <div class="step-icon">🚩</div>
+          <h3>Guess the Flag</h3>
+          <p>A flag appears – pick the correct country from 4 options before time runs out!</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">03</div>
+          <div class="step-icon">⚡</div>
+          <h3>Earn Points</h3>
+          <p>Get 100 points per correct answer plus a speed bonus for fast responses.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">04</div>
+          <div class="step-icon">🏆</div>
+          <h3>Climb the Board</h3>
+          <p>Beat your high score and compete for the top spot on the global leaderboard.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>🚩 Guess the Flag &copy; 2024 — Built with ❤️ and FastAPI + Node.js</p>
+  </footer>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

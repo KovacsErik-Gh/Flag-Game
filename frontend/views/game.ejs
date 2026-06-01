@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Play – Guess the Flag</title>
+  <meta name="description" content="Guess the world flag game – 10 rounds, 15 seconds each!" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="game-page">
+  <%- include('partials/nav') %>
+
+  <div class="game-container">
+
+    <!-- Start Screen -->
+    <div class="game-screen" id="screen-start">
+      <div class="start-card">
+        <div class="start-emoji">🚩</div>
+        <h1 class="start-title">Ready to Play?</h1>
+        <p class="start-subtitle">10 random flags · 15 seconds each · Speed bonus included</p>
+        <div class="start-rules">
+          <div class="rule-item"><span>🎯</span> 100 pts per correct answer</div>
+          <div class="rule-item"><span>⚡</span> Up to 50 bonus pts for speed</div>
+          <div class="rule-item"><span>❌</span> 0 pts for wrong / timeout</div>
+        </div>
+        <button class="btn btn-primary btn-lg" id="start-game-btn">
+          Start Game 🚀
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div class="game-screen hidden" id="screen-loading">
+      <div class="loading-card">
+        <div class="spinner"></div>
+        <p>Loading flags...</p>
+      </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div class="game-screen hidden" id="screen-game">
+      <!-- HUD -->
+      <div class="game-hud">
+        <div class="hud-item">
+          <span class="hud-label">Question</span>
+          <span class="hud-value" id="question-counter">1 / 10</span>
+        </div>
+        <div class="hud-timer-wrap">
+          <svg class="timer-ring" viewBox="0 0 60 60">
+            <circle class="timer-bg" cx="30" cy="30" r="26" />
+            <circle class="timer-progress" id="timer-circle" cx="30" cy="30" r="26" />
+          </svg>
+          <span class="timer-text" id="timer-text">15</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">Score</span>
+          <span class="hud-value" id="score-display">0</span>
+        </div>
+      </div>
+
+      <!-- Flag -->
+      <div class="flag-container">
+        <img id="flag-image" class="flag-image" src="" alt="Guess this flag" />
+      </div>
+
+      <!-- Options -->
+      <div class="options-grid" id="options-grid">
+        <button class="option-btn" id="opt-0" data-index="0"></button>
+        <button class="option-btn" id="opt-1" data-index="1"></button>
+        <button class="option-btn" id="opt-2" data-index="2"></button>
+        <button class="option-btn" id="opt-3" data-index="3"></button>
+      </div>
+
+      <!-- Feedback -->
+      <div class="feedback-bar hidden" id="feedback-bar">
+        <span id="feedback-text"></span>
+      </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div class="game-screen hidden" id="screen-results">
+      <div class="results-card">
+        <div class="results-emoji" id="results-emoji">🏆</div>
+        <h2 class="results-title">Round Complete!</h2>
+        <div class="results-score-big" id="results-score">0</div>
+        <p class="results-label">points</p>
+
+        <div class="results-stats">
+          <div class="result-stat">
+            <span class="result-stat-value" id="results-correct">0</span>
+            <span class="result-stat-label">Correct</span>
+          </div>
+          <div class="result-stat">
+            <span class="result-stat-value" id="results-wrong">0</span>
+            <span class="result-stat-label">Wrong</span>
+          </div>
+          <div class="result-stat">
+            <span class="result-stat-value" id="results-accuracy">0%</span>
+            <span class="result-stat-label">Accuracy</span>
+          </div>
+        </div>
+
+        <div class="results-actions">
+          <button class="btn btn-primary" id="play-again-btn">Play Again 🔄</button>
+          <a href="/leaderboard" class="btn btn-outline">Leaderboard 🏆</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Pass server-side username to client JS
+    window.GAME_USERNAME = "<%= user.username %>";
+  </script>
+  <script src="/js/game.js"></script>
+</body>
+</html>

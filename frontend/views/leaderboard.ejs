@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leaderboard – Guess the Flag</title>
+  <meta name="description" content="Global leaderboard for Guess the Flag – see who knows the most flags!" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <%- include('partials/nav') %>
+
+  <div class="leaderboard-page">
+    <div class="container">
+      <div class="leaderboard-header">
+        <h1 class="page-title">🏆 Global Leaderboard</h1>
+        <p class="page-subtitle">Top flag experts from around the world</p>
+      </div>
+
+      <% if (leaderboard.length === 0) { %>
+        <div class="empty-state">
+          <div class="empty-icon">🏜️</div>
+          <h3>No scores yet</h3>
+          <p>Be the first to play and claim the top spot!</p>
+          <% if (user) { %>
+            <a href="/game" class="btn btn-primary">Play Now</a>
+          <% } else { %>
+            <a href="/register" class="btn btn-primary">Sign Up & Play</a>
+          <% } %>
+        </div>
+      <% } else { %>
+
+        <!-- Podium Top 3 -->
+        <% if (leaderboard.length >= 3) { %>
+        <div class="podium">
+          <!-- 2nd -->
+          <div class="podium-item podium-2">
+            <div class="podium-avatar">🥈</div>
+            <div class="podium-name"><%= leaderboard[1].username %></div>
+            <div class="podium-score"><%= leaderboard[1].best_score %></div>
+            <div class="podium-bar podium-bar-2">2nd</div>
+          </div>
+          <!-- 1st -->
+          <div class="podium-item podium-1">
+            <div class="podium-crown">👑</div>
+            <div class="podium-avatar">🥇</div>
+            <div class="podium-name"><%= leaderboard[0].username %></div>
+            <div class="podium-score"><%= leaderboard[0].best_score %></div>
+            <div class="podium-bar podium-bar-1">1st</div>
+          </div>
+          <!-- 3rd -->
+          <div class="podium-item podium-3">
+            <div class="podium-avatar">🥉</div>
+            <div class="podium-name"><%= leaderboard[2].username %></div>
+            <div class="podium-score"><%= leaderboard[2].best_score %></div>
+            <div class="podium-bar podium-bar-3">3rd</div>
+          </div>
+        </div>
+        <% } %>
+
+        <!-- Full Table -->
+        <div class="leaderboard-table-wrap">
+          <table class="leaderboard-table" id="leaderboard-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Player</th>
+                <th>Best Score</th>
+                <th>Games Played</th>
+                <th>Avg Score</th>
+                <th>Total Correct</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% leaderboard.forEach(function(player) { %>
+                <tr class="<%= user && user.username === player.username ? 'my-row' : '' %>">
+                  <td class="rank-cell">
+                    <% if (player.rank === 1) { %>
+                      <span class="rank-badge rank-1">🥇</span>
+                    <% } else if (player.rank === 2) { %>
+                      <span class="rank-badge rank-2">🥈</span>
+                    <% } else if (player.rank === 3) { %>
+                      <span class="rank-badge rank-3">🥉</span>
+                    <% } else { %>
+                      <span class="rank-num">#<%= player.rank %></span>
+                    <% } %>
+                  </td>
+                  <td class="player-cell">
+                    <span class="player-avatar">
+                      <%= player.username.charAt(0).toUpperCase() %>
+                    </span>
+                    <span class="player-name"><%= player.username %></span>
+                    <% if (user && user.username === player.username) { %>
+                      <span class="you-badge">YOU</span>
+                    <% } %>
+                  </td>
+                  <td class="score-cell"><%= player.best_score %></td>
+                  <td><%= player.total_games %></td>
+                  <td><%= player.avg_score %></td>
+                  <td><%= player.total_correct %></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+
+      <div class="leaderboard-cta">
+        <% if (user) { %>
+          <a href="/game" class="btn btn-primary btn-lg">🎮 Play to Improve Your Score</a>
+        <% } else { %>
+          <a href="/register" class="btn btn-primary btn-lg">🚀 Join & Compete</a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>🚩 Guess the Flag &copy; 2024</p>
+  </footer>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

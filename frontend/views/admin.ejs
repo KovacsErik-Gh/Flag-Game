@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel – Guess the Flag</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <%- include('partials/nav') %>
+
+  <div class="admin-page">
+    <div class="container">
+
+      <!-- Header -->
+      <div class="admin-header">
+        <div>
+          <h1 class="page-title">⚙️ Admin Panel</h1>
+          <p class="page-subtitle">User management & CRUD operations</p>
+        </div>
+        <div class="admin-stats-row">
+          <div class="admin-stat-pill">👥 <%= users.length %> Users</div>
+        </div>
+      </div>
+
+      <!-- Alerts -->
+      <% if (message) { %>
+        <div class="alert alert-success admin-alert">✅ <%= message %></div>
+      <% } %>
+      <% if (error) { %>
+        <div class="alert alert-error admin-alert">⚠️ <%= error %></div>
+      <% } %>
+
+      <!-- Create New User -->
+      <div class="admin-card">
+        <div class="admin-card-header" onclick="toggleSection('create-section')">
+          <h2>➕ Create New User</h2>
+          <span class="toggle-icon" id="create-section-icon">▼</span>
+        </div>
+        <div class="admin-card-body" id="create-section">
+          <form action="/admin/users" method="POST" class="admin-form">
+            <div class="admin-form-grid">
+              <div class="form-group">
+                <label class="form-label">Username</label>
+                <div class="input-wrapper">
+                  <span class="input-icon">👤</span>
+                  <input type="text" name="username" class="form-input" placeholder="username" required minlength="3" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email</label>
+                <div class="input-wrapper">
+                  <span class="input-icon">📧</span>
+                  <input type="email" name="email" class="form-input" placeholder="email@example.com" required />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Password</label>
+                <div class="input-wrapper">
+                  <span class="input-icon">🔒</span>
+                  <input type="password" name="password" class="form-input" placeholder="min. 6 characters" required minlength="6" />
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Create User</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Users Table -->
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <h2>👥 All Users</h2>
+          <input type="text" id="search-input" class="search-input" placeholder="🔍  Search users..." oninput="filterUsers()" />
+        </div>
+        <div class="admin-card-body no-pad">
+          <% if (users.length === 0) { %>
+            <div class="empty-state" style="padding: 40px;">
+              <div class="empty-icon">👤</div>
+              <p>No users yet</p>
+            </div>
+          <% } else { %>
+            <div class="admin-table-wrap">
+              <table class="admin-table" id="users-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Games</th>
+                    <th>Best Score</th>
+                    <th>Joined</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% users.forEach(function(u) { %>
+                    <tr class="user-row <%= u.is_admin ? 'admin-row' : '' %>" data-username="<%= u.username.toLowerCase() %>" data-email="<%= u.email.toLowerCase() %>">
+                      <td class="id-cell">#<%= u.id %></td>
+                      <td class="username-cell">
+                        <span class="user-avatar-sm"><%= u.username.charAt(0).toUpperCase() %></span>
+                        <span><%= u.username %></span>
+                        <% if (u.is_admin) { %><span class="admin-badge">ADMIN</span><% } %>
+                      </td>
+                      <td class="email-cell"><%= u.email %></td>
+                      <td><span class="role-badge <%= u.is_admin ? 'role-admin' : 'role-user' %>"><%= u.is_admin ? '👑 Admin' : '👤 User' %></span></td>
+                      <td><%= u.total_games %></td>
+                      <td class="score-cell"><%= u.best_score || '—' %></td>
+                      <td class="date-cell"><%= u.created_at ? new Date(u.created_at).toLocaleDateString('ro-RO') : '—' %></td>
+                      <td class="actions-cell">
+                        <button class="btn btn-sm btn-ghost" onclick="openEditModal(<%= JSON.stringify(u) %>)">✏️ Edit</button>
+                        <form action="/admin/users/<%= u.id %>/clear-scores" method="POST" style="display:inline" onsubmit="return confirm('Clear all scores for <%= u.username %>?')">
+                          <button type="submit" class="btn btn-sm btn-warning">🗑️ Scores</button>
+                        </form>
+                        <% if (!(u.username === 'Admin' && u.is_admin)) { %>
+                          <form action="/admin/users/<%= u.id %>/delete" method="POST" style="display:inline" onsubmit="return confirm('DELETE user <%= u.username %>? This cannot be undone!')">
+                            <button type="submit" class="btn btn-sm btn-danger">❌ Delete</button>
+                          </form>
+                        <% } %>
+                      </td>
+                    </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          <% } %>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div class="modal-overlay hidden" id="edit-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>✏️ Edit User</h3>
+        <button class="modal-close" onclick="closeEditModal()">✕</button>
+      </div>
+      <form id="edit-form" method="POST" class="admin-form">
+        <input type="hidden" name="_userId" id="edit-user-id" />
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <div class="input-wrapper">
+            <span class="input-icon">👤</span>
+            <input type="text" name="username" id="edit-username" class="form-input" required minlength="3" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <div class="input-wrapper">
+            <span class="input-icon">📧</span>
+            <input type="email" name="email" id="edit-email" class="form-input" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">New Password <span style="color:var(--text-dim);font-size:0.8rem">(leave blank to keep)</span></label>
+          <div class="input-wrapper">
+            <span class="input-icon">🔒</span>
+            <input type="password" name="password" id="edit-password" class="form-input" placeholder="Leave blank to keep current" minlength="6" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="admin-checkbox-label">
+            <input type="checkbox" name="is_admin" id="edit-is-admin" />
+            <span>👑 Admin privileges</span>
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" onclick="closeEditModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>⚙️ Admin Panel – Guess the Flag</p>
+  </footer>
+
+  <script>
+    function openEditModal(user) {
+      document.getElementById('edit-user-id').value = user.id;
+      document.getElementById('edit-username').value = user.username;
+      document.getElementById('edit-email').value = user.email;
+      document.getElementById('edit-password').value = '';
+      document.getElementById('edit-is-admin').checked = user.is_admin;
+      document.getElementById('edit-form').action = '/admin/users/' + user.id + '/update';
+      document.getElementById('edit-modal').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-modal').classList.add('hidden');
+    }
+
+    function toggleSection(id) {
+      const el = document.getElementById(id);
+      const icon = document.getElementById(id + '-icon');
+      el.classList.toggle('collapsed');
+      icon.textContent = el.classList.contains('collapsed') ? '▶' : '▼';
+    }
+
+    function filterUsers() {
+      const q = document.getElementById('search-input').value.toLowerCase();
+      document.querySelectorAll('.user-row').forEach(row => {
+        const name = row.dataset.username || '';
+        const email = row.dataset.email || '';
+        row.style.display = (name.includes(q) || email.includes(q)) ? '' : 'none';
+      });
+    }
+
+    // Close modal on overlay click
+    document.getElementById('edit-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeEditModal();
+    });
+  </script>
+</body>
+</html>
